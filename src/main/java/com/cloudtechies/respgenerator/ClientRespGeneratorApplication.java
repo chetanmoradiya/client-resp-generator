@@ -1,4 +1,4 @@
-package com.iris.hackathon.respgenerator;
+package com.cloudtechies.respgenerator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
