@@ -60,9 +60,10 @@ public class PayloadKafkaListener {
         Optional<List<TransactionReport>> transactionReportList = transactionReportRepository.findByPayloadID(filePayloadMessage.getPayloadId());
 
         if (transactionReportList.isPresent()) {
-
+            log.info("Fetched transactionData, Trying to write response");
             payloadResponses = responseWriter.generateResponse(transactionReportList.get());
         }
+        log.info("Going to generate csv response file");
         if (responseFileGenerator.generateResponseFile(filePayloadMessage, payloadResponses)) {
             payloadRepository.updatePayloadStatus(filePayloadMessage.getPayloadId(), PayloadState.COMPLETED.name());
         }

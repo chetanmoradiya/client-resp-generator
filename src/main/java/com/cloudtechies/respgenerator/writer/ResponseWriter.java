@@ -27,7 +27,7 @@ public class ResponseWriter {
             PayloadResponse response = PayloadResponse.builder().trnId(report.getTrnId()).txnStatus(report.getTxnStatus()).build();
             payloadResponsesList.add(response);
         }
-
+        log.info("Payload Response List generated Successfully");
         return payloadResponsesList;
 
     }

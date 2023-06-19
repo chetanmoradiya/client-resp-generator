@@ -1,8 +1,10 @@
 package com.cloudtechies.respgenerator.generator;
 
+import com.cloudtechies.respgenerator.exception.UnrecoverableException;
 import com.cloudtechies.respgenerator.model.FilePayloadMessage;
 import com.cloudtechies.respgenerator.model.PayloadResponse;
 import com.cloudtechies.respgenerator.writer.ResponseWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@Slf4j
 public class ResponseFileGenerator {
 
     @Autowired
@@ -22,13 +25,23 @@ public class ResponseFileGenerator {
         String outFullFilePath = payload.getRespFilePath() + File.separator + outFileName.concat(".temp");
         String finalFullFilePath = payload.getRespFilePath() + File.separator + outFileName.concat(".csv");
 
-        File tempRespFile = new File(outFullFilePath);
-        try {
-            writeDatatoFile(response, tempRespFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         File finalFile = new File(finalFullFilePath);
+
+
+        File tempRespFile = new File(finalFullFilePath);
+        try {
+            if (finalFile.exists()) {
+                if (finalFile.delete()) {
+                    tempRespFile = new File(outFullFilePath);
+                    writeDatatoFile(response, tempRespFile);
+                }
+            } else {
+                writeDatatoFile(response, tempRespFile);
+            }
+
+        } catch (IOException e) {
+            throw new UnrecoverableException("Exception while writing data to file");
+        }
         tempRespFile.renameTo(finalFile);
         return true;
 
