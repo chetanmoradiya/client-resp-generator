@@ -64,8 +64,13 @@ public class PayloadKafkaListener {
             payloadResponses = responseWriter.generateResponse(transactionReportList.get());
         }
         log.info("Going to generate csv response file");
-        if (responseFileGenerator.generateResponseFile(filePayloadMessage, payloadResponses)) {
-            payloadRepository.updatePayloadStatus(filePayloadMessage.getPayloadId(), PayloadState.COMPLETED.name());
+        filePayloadMessage = responseFileGenerator.generateResponseFile(filePayloadMessage, payloadResponses);
+        if (PayloadState.PROCESSED.equals(filePayloadMessage.getPayloadState())) {
+            payloadRepository.updatePayloadStatus(filePayloadMessage.getPayloadId(), filePayloadMessage.getPayloadState(), filePayloadMessage.getUpdateTs(), filePayloadMessage.getRespFilePath());
+        } else {
+            log.info("Payload not processed :(");
         }
+
+
     }
 }

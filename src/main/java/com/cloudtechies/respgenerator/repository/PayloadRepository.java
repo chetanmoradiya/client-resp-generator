@@ -25,8 +25,8 @@ public interface PayloadRepository extends JpaRepository<Payload, PayloadPK> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE payload set state= :payloadStatus WHERE payload_id= :payloadId ", nativeQuery = true)
-    void updatePayloadStatus(UUID payloadId, String payloadStatus);
+    @Query(value = "UPDATE payload set state= :state, update_ts= :updatets, resp_file_path= :respfilepath  WHERE payload_id= :payloadId ", nativeQuery = true)
+    void updatePayloadStatus(UUID payloadId, PayloadState state, Instant updatets, String respfilepath);
 
 
 }

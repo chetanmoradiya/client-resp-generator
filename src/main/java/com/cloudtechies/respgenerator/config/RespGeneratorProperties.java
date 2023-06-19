@@ -23,5 +23,7 @@ public class RespGeneratorProperties {
 
     private String respCSVHeader;
 
+    private String respRootPath;
+
 
 }

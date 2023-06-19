@@ -16,12 +16,13 @@ public class FilePayloadMessage {
 
     private String fileName;
 
+    private String ftpFolder;
+
     private String absolutePath;
 
     private Instant createTs;
 
     private Instant updateTs;
-
 
     private Instant lastModifiedTs;
 

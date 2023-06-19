@@ -1,5 +1,7 @@
 package com.cloudtechies.respgenerator.generator;
 
+import com.cloudtechies.respgenerator.config.RespGeneratorProperties;
+import com.cloudtechies.respgenerator.enums.PayloadState;
 import com.cloudtechies.respgenerator.exception.UnrecoverableException;
 import com.cloudtechies.respgenerator.model.FilePayloadMessage;
 import com.cloudtechies.respgenerator.model.PayloadResponse;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -20,9 +23,13 @@ public class ResponseFileGenerator {
     @Autowired
     ResponseWriter responseWriter;
 
-    public boolean generateResponseFile(FilePayloadMessage payload, List<PayloadResponse> response) {
+    @Autowired
+    RespGeneratorProperties respGeneratorProperties;
+
+    public FilePayloadMessage generateResponseFile(FilePayloadMessage payload, List<PayloadResponse> response) {
+        String rootPath = respGeneratorProperties.getRespRootPath();
         String outFileName = payload.getFileName();
-        String outFullFilePath = payload.getRespFilePath() + File.separator + outFileName.concat(".temp");
+        String outFullFilePath = rootPath + payload.getFtpFolder() + File.separator + outFileName.concat(".temp");
         String finalFullFilePath = payload.getRespFilePath() + File.separator + outFileName.concat(".csv");
 
         File finalFile = new File(finalFullFilePath);
@@ -43,7 +50,10 @@ public class ResponseFileGenerator {
             throw new UnrecoverableException("Exception while writing data to file");
         }
         tempRespFile.renameTo(finalFile);
-        return true;
+        payload.setRespFilePath(finalFile.getPath());
+        payload.setUpdateTs(Instant.now());
+        payload.setPayloadState(PayloadState.PROCESSED);
+        return payload;
 
     }
 
