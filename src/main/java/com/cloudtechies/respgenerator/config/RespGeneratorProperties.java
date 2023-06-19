@@ -21,5 +21,7 @@ public class RespGeneratorProperties {
 
     private String maxPollSize;
 
+    private String respCSVHeader;
+
 
 }
