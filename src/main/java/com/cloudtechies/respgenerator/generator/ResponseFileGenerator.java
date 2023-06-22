@@ -28,30 +28,30 @@ public class ResponseFileGenerator {
 
     public FilePayloadMessage generateResponseFile(FilePayloadMessage payload, List<PayloadResponse> response) {
         String rootPath = respGeneratorProperties.getRespRootPath();
-        String outFileName = payload.getFileName();
-        String outFullFilePath = rootPath + payload.getFtpFolder() + File.separator + outFileName.concat(".temp");
-        String finalFullFilePath = payload.getRespFilePath() + File.separator + outFileName.concat(".csv");
+        String outFileName = payload.getRespFileName();
+        String respPath = rootPath +File.separator+payload.getFtpFolder();
+        String respFileTempPath = respPath + File.separator + outFileName+".tmp";
+        String respFileFinalPath = respPath + File.separator + outFileName+".csv";
 
-        File finalFile = new File(finalFullFilePath);
+        File finalFile = new File(respFileFinalPath);
 
-
-        File tempRespFile = new File(finalFullFilePath);
+        File tempRespFile = new File(respFileTempPath);
         try {
-            if (finalFile.exists()) {
-                if (finalFile.delete()) {
-                    tempRespFile = new File(outFullFilePath);
-                    writeDatatoFile(response, tempRespFile);
-                }
-            } else {
-                writeDatatoFile(response, tempRespFile);
+            if(finalFile.exists()){
+                log.info("CSV response file found... deleting before generating");
+                finalFile.delete();
             }
-
+            if(tempRespFile.exists()){
+                log.info(".temp response file found... deleting before generating");
+                tempRespFile.delete();
+            }
+            writeDatatoFile(response,tempRespFile);
         } catch (IOException e) {
             throw new UnrecoverableException("Exception while writing data to file");
         }
         tempRespFile.renameTo(finalFile);
         payload.setRespFilePath(finalFile.getPath());
-        payload.setUpdateTs(Instant.now());
+        payload.setUpdateTs(Instant.now().toEpochMilli());
         payload.setPayloadState(PayloadState.PROCESSED);
         return payload;
 

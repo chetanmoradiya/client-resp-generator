@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 public class RespGeneratorProperties {
 
 
-    private String kakfaClusterURL;
+    private String kafkaClusterURL;
 
     private String kafkaConsumerGroupName;
 

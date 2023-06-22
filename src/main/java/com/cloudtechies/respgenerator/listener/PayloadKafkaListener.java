@@ -2,7 +2,6 @@ package com.cloudtechies.respgenerator.listener;
 
 import com.cloudtechies.respgenerator.config.RespGeneratorProperties;
 import com.cloudtechies.respgenerator.entity.TransactionReport;
-import com.cloudtechies.respgenerator.enums.PayloadState;
 import com.cloudtechies.respgenerator.exception.UnrecoverableException;
 import com.cloudtechies.respgenerator.generator.ResponseFileGenerator;
 import com.cloudtechies.respgenerator.model.FilePayloadMessage;
@@ -19,6 +18,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,8 @@ public class PayloadKafkaListener {
     ResponseWriter responseWriter;
 
 
-    @KafkaListener(topics = "#{respGeneratorProperties.kakfaPersistPayloadTopic}", groupId = "#{respGeneratorProperties.kafkaConsumerGroupName}", concurrency = "1")
+    @KafkaListener(topics = "#{respGeneratorProperties.kafkaPersistPayloadTopic}", groupId = "#{respGeneratorProperties.kafkaConsumerGroupName}", concurrency = "1")
+    @Transactional
     public void handleKafkaMessage(@Payload String messages) {
         log.info("Received payload message {}", messages);
 
@@ -57,18 +59,26 @@ public class PayloadKafkaListener {
             throw new UnrecoverableException("Json couldn't be processed");
         }
 
-        Optional<List<TransactionReport>> transactionReportList = transactionReportRepository.findByPayloadID(filePayloadMessage.getPayloadId());
+        List<TransactionReport> transactionReportList = transactionReportRepository.findByPayloadId(filePayloadMessage.getPayloadId());
 
-        if (transactionReportList.isPresent()) {
+        if (!transactionReportList.isEmpty()) {
             log.info("Fetched transactionData, Trying to write response");
-            payloadResponses = responseWriter.generateResponse(transactionReportList.get());
+            payloadResponses = responseWriter.generateResponse(transactionReportList);
+        }else{
+            throw new UnrecoverableException("RESP Payload has no transactions. Can not generate Response.");
         }
         log.info("Going to generate csv response file");
         filePayloadMessage = responseFileGenerator.generateResponseFile(filePayloadMessage, payloadResponses);
-        if (PayloadState.PROCESSED.equals(filePayloadMessage.getPayloadState())) {
-            payloadRepository.updatePayloadStatus(filePayloadMessage.getPayloadId(), filePayloadMessage.getPayloadState(), filePayloadMessage.getUpdateTs(), filePayloadMessage.getRespFilePath());
-        } else {
-            log.info("Payload not processed :(");
+
+        Optional<com.cloudtechies.respgenerator.entity.Payload> oPayload = payloadRepository.findByPayloadId(filePayloadMessage.getPayloadId());
+        if (oPayload.isPresent() && filePayloadMessage.getRespFilePath()!=null) {
+
+            log.info("Marking payload as PROCESSED");
+            com.cloudtechies.respgenerator.entity.Payload pyd = oPayload.get();
+            pyd.setPayloadState(filePayloadMessage.getPayloadState());
+            pyd.setUpdateTs(Instant.now());
+            pyd.setRespFilePath(filePayloadMessage.getRespFilePath());
+            payloadRepository.save(pyd);
         }
 
 

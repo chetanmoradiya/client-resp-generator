@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/hackathon
+    password: admin
+    hikari:
+      schema: cloudtechies
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+com:
+  iris:
+    hackathon:
+      respCSVHeader: 'Record Number, Transaction Id, Status'
+      respRootPath: /anand/temp/mnt/response
+      kafkaExponentialBackOffInitialInterval: '3000'
+      kafkaExponentialBackOffMultiplier: '3'
+      kafkaConsumerGroupName: payloadProcessor
+      maxPollSize: '1000'
+      kafkaClusterURL: localhost:9092
+      kafkaPersistPayloadTopic: client-resp-queue
+server:
+  port: '8081'

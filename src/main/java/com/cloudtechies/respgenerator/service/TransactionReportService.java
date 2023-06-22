@@ -15,7 +15,7 @@ public class TransactionReportService {
     TransactionReportRepository transactionReportRepository;
 
     public Optional<TransactionReport> getTransactionReportDetails(UUID transactionReportId) {
-        return transactionReportRepository.findByTxnReportId(transactionReportId);
+        return transactionReportRepository.findByTransactionReportId(transactionReportId);
     }
 
 }

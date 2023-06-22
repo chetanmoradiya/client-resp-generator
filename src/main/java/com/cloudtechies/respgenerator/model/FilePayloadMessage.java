@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -20,11 +21,11 @@ public class FilePayloadMessage {
 
     private String absolutePath;
 
-    private Instant createTs;
+    private Long createTs;
 
-    private Instant updateTs;
+    private Long updateTs;
 
-    private Instant lastModifiedTs;
+    private Long lastModifiedTs;
 
     private Long instructionCount;
 

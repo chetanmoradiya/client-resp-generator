@@ -22,6 +22,8 @@ public interface PayloadRepository extends JpaRepository<Payload, PayloadPK> {
 
     List<Payload> findByPayloadStateOrderByUpdateTsDescCreateTsDesc(@Param("payloadState") PayloadState state);
 
+    Optional<Payload> findByPayloadId(@Param("payloadId") UUID payloadId);
+
 
     @Transactional
     @Modifying
