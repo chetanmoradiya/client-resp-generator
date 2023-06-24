@@ -39,6 +39,7 @@ public class ResponseWriter {
         for (PayloadResponse response : responseList) {
             String csvRow = String.valueOf(rowNum).concat(COMMA).concat(response.getTrnId()==null?"":response.getTrnId()).concat(COMMA).concat(String.valueOf(response.getTxnStatus())).concat("\n");
             responses.add(csvRow);
+            rowNum++;
         }
 
         return responses;

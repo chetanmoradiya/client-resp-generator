@@ -1,11 +1,14 @@
 package com.cloudtechies.respgenerator.entity;
 
 import com.cloudtechies.respgenerator.enums.TransactionStatus;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +19,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@TypeDef(name="json", typeClass = JsonType.class)
 public class TransactionReport {
 
     @Id
@@ -36,8 +40,9 @@ public class TransactionReport {
     @Column(name = "txn_status")
     private TransactionStatus txnStatus;
 
+    @Type(type="json")
     @Column(name = "rjct_reason")
-    private String rjctReason;
+    private List<String> rjctReasons;
 
     @Column(name = "trn_id")
     private String trnId;
@@ -76,7 +81,7 @@ public class TransactionReport {
     private String ctrPtySide;
 
     @Column(name = "event_date")
-    private LocalDate eventDate;
+    private String eventDate;
 
     @Column(name = "trading_venue")
     private String tradingVenue;
@@ -85,7 +90,7 @@ public class TransactionReport {
     private String mstrAgreementType;
 
     @Column(name = "value_dt")
-    private LocalDate valueDt;
+    private String valueDt;
 
     @Column(name = "gen_coll_ind")
     private String genCollInd;
@@ -112,7 +117,7 @@ public class TransactionReport {
     private String loanLeiOfIssuer;
 
     @Column(name = "loan_maturity_of_secu")
-    private LocalDate loanMaturityOfSecurity;
+    private String loanMaturityOfSecurity;
 
     @Column(name = "loan_juris_of_issuer")
     private String loanJurisOfIssuer;
