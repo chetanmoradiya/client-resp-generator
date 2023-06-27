@@ -37,7 +37,7 @@ public class ResponseWriter {
         responses.add(respGeneratorProperties.getRespCSVHeader());
         int rowNum = 1;
         for (PayloadResponse response : responseList) {
-            String csvRow = String.valueOf(rowNum).concat(COMMA).concat(response.getTrnId()==null?"":response.getTrnId()).concat(COMMA).concat(String.valueOf(response.getTxnStatus())).concat("\n");
+            String csvRow = String.valueOf(rowNum).concat(COMMA).concat(response.getTrnId()==null?"":response.getTrnId()).concat(COMMA).concat(String.valueOf(response.getTxnStatus()));
             responses.add(csvRow);
             rowNum++;
         }

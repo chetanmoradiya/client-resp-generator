@@ -15,7 +15,7 @@ com:
       kafkaExponentialBackOffInitialInterval: '3000'
       kafkaExponentialBackOffMultiplier: '3'
       kafkaConsumerGroupName: payloadProcessor
-      maxPollSize: '1000'
+      maxPollSize: 100
       kafkaClusterURL: localhost:9092
       kafkaPersistPayloadTopic: client-resp-queue
 server:
