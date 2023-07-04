@@ -11,11 +11,11 @@ com:
   iris:
     hackathon:
       respCSVHeader: 'Record Number, Transaction Id, Status'
-      respRootPath: /anand/temp/mnt/response
+      respRootPath: /hackathon/temp/mnt/response
       kafkaExponentialBackOffInitialInterval: '3000'
       kafkaExponentialBackOffMultiplier: '3'
       kafkaConsumerGroupName: payloadProcessor
-      maxPollSize: 100
+      maxPollSize: 1000
       kafkaClusterURL: localhost:9092
       kafkaPersistPayloadTopic: client-resp-queue
 server:
